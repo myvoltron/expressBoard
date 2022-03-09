@@ -1,12 +1,20 @@
 const express = require('express');
+const dotenv = require('dotenv'); 
+const passport = require('passport'); 
+const cookieParser = require('cookie-parser'); 
+const session = require('express-session'); 
 const ejs = require('ejs');
 const ejsLayout = require('express-ejs-layouts'); 
 const path = require('path'); 
 const morgan = require('morgan');
 const methodOverride = require('method-override');
+ 
+dotenv.config();
+const passportConfig = require('./passport'); 
 
 const app = express(); 
- 
+
+passportConfig(); // 패스포트 설정 
 app.set('port', 8081); 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views')); 
@@ -16,6 +24,16 @@ app.use(morgan('dev'));
 app.use(methodOverride('_method')); // '_method'를 안넣으면 오류가 남
 app.use(express.static(path.join(__dirname, 'public'))); 
 app.use(express.json()); // json 데이터 처리 
+app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(session({
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.COOKIE_SECRET, 
+    cookie: {
+        httpOnly: true, 
+        secure: false, 
+    }, 
+}));
 app.use(express.urlencoded({ extended: false })); 
 
 // routers
