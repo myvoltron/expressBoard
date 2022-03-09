@@ -1,0 +1,16 @@
+<div class="container">
+    <h2>회원 목록</h2>
+    <% if (users === null) { %>
+        회원이 없습니다. 
+    <% } else { %>
+        <% users.forEach(user => { %>
+            <div class="card" style="width: 30rem;">
+                <div class="card-body">
+                    <h5 class="card-title"><%= user.name%></h5>
+                    <a href="/user/<%= user.id%>" class="card-link">상세보기</a>
+                </div>
+            </div>
+            <br>
+        <% }); %>
+    <% } %>
+</div>

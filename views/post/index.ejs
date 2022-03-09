@@ -1,0 +1,23 @@
+<div class="container">
+    <h2>글 목록</h2>
+    <% if (posts === null) { %>
+        글이 없습니다.
+    <% } else { %>
+        <% posts.forEach(post => { %>
+            <div class="card" style="width: 30rem;">
+                <div class="card-body">
+                    <% if (post.filename && post.filename.length > 0) { %>
+                        <img src="uploads/<%= post.filename%>" class="card-img-top" alt="...">
+                    <% } %>
+                    <h5 class="card-title"><%= post.title%></h5>
+                    <p class="card-text"><%= post.created_at%></p>
+                    <p class="card-text"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+                      </svg> <%= post.likes%></p>
+                    <a href="/post/<%= post.id%>" class="card-link">상세보기</a>
+                </div>
+            </div>
+            <br>
+        <% }); %>
+    <% } %>
+</div>

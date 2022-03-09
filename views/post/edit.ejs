@@ -1,0 +1,18 @@
+<div class="container">
+    <h2>글 수정</h2>
+    <form action="/post/<%= post.id%>?_method=PUT" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title" value="<%= post.title%>">
+        </div>
+        <div class="mb-3">
+            <label for="content" class="form-label">Content</label>
+            <textarea class="form-control" id="content" name="content"><%= post.content%></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="file" class="form-label">image</label>
+            <input class="form-control" type="file" id="file" name="image" value="<%= post.filename%>">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>

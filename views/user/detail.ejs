@@ -1,0 +1,22 @@
+<h2>회원 정보</h2>
+
+<div class="card" style="width: 50%; height: 50%;">
+    <div class="card-body">
+        <h5 class="card-title">
+            <%= user.email%>
+        </h5>
+        <p class="card-text">
+            <%= user.name%>
+        </p>
+        <div style="display: flex;">
+            <a href="/user/<%= user.id%>/edit" role="button" class="btn btn-primary">수정하기</a>
+            <form action="/user/<%= user.id%>?_method=DELETE" method="post">
+                <button type="submit" class="btn btn-secondary">삭제하기</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="comment" class="container">
+
+</div>
