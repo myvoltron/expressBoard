@@ -51,8 +51,17 @@ router.route('/:id')
 
         connection.query(`select * from user where id = ${user_id}`, (err, result) => {
 
-            res.render('user/detail', {
-                userInfo: result[0], 
+            const userInfo = result[0]; 
+
+            connection.query(`SELECT P.* FROM post P INNER JOIN likes L ON P.id = L.post_id WHERE L.user_id = ${user_id}`, (err, result) => {
+                if (err) throw err; 
+
+                const postsByUserLike = result; 
+
+                res.render('user/detail', {
+                    userInfo: userInfo, 
+                    postsByUserLike: postsByUserLike,
+                }); 
             }); 
         });
     })
