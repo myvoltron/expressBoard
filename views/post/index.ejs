@@ -1,5 +1,9 @@
 <div class="container">
-    <h2>글 목록</h2>
+    <% if (user) { %>
+        <h2><%= user.name%>님 안녕하세요!</h2>
+    <% } %>
+    <h5>글 목록</h5>
+    <br>
     <% if (posts === null) { %>
         글이 없습니다.
     <% } else { %>

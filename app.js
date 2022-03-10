@@ -23,9 +23,10 @@ app.use(ejsLayout);
 app.use(morgan('dev'));
 app.use(methodOverride('_method')); // '_method'를 안넣으면 오류가 남
 app.use(express.static(path.join(__dirname, 'public'))); 
-app.use(express.json()); // json 데이터 처리 
+app.use(express.json()); // json 데이터 처리
+app.use(express.urlencoded({ extended: false })); // POST로 들어오는 body 처리 
 app.use(cookieParser(process.env.COOKIE_SECRET));
-app.use(session({
+app.use(session({               // passport.session() 보다 앞에 있어야함
     resave: false,
     saveUninitialized: false,
     secret: process.env.COOKIE_SECRET, 
@@ -34,17 +35,38 @@ app.use(session({
         secure: false, 
     }, 
 }));
-app.use(express.urlencoded({ extended: false })); 
+app.use(passport.initialize()); // req에 passport 설정을 심는다. 
+app.use(passport.session());    // req.session 에 passport 정보를 심는다. 
+/* 
+    로그인 이후에 요청이 들어올 때마다 passport.session 미들웨어가 passport.deserializeUser 메서드를 호출할 것이다. 
+    req.session에 저장된 아이디로 데이터베이스에서 user를 조회한다. 
+    조회한 user는 req.user에 담긴다. 
+*/
+
+
+
 
 // routers
 const postRouter = require('./router/postRouter'); 
 const userRouter = require('./router/userRouter');
+const authRouter = require('./router/authRouter');
 
 app.get('/', (req, res) => {
     res.redirect('/post');
 });
+app.use((req, res, next) => {
+
+    res.locals.user = req.user != null ? req.user : null; // user를 전역적으로 처리하게 함 
+    next();
+}); 
 app.use('/post', postRouter); 
 app.use('/user', userRouter); 
+app.use('/auth', authRouter); 
+
+
+
+
+
 
 // 유효하지 않은 url || 404
 app.use((req, res, next) => {
