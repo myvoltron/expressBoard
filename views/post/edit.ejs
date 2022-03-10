@@ -1,6 +1,15 @@
 <div class="container">
     <h2>글 수정</h2>
     <form action="/post/<%= post.id%>?_method=PUT" method="post" enctype="multipart/form-data">
+        <% if (user) { %>
+            <input type="hidden" name="userPost" value="userPost">
+        <% } %>
+        <% if (user === null) { %>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password">
+            </div>
+        <% } %>
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
             <input type="text" class="form-control" id="title" name="title" value="<%= post.title%>">

@@ -1,15 +1,31 @@
 <h2>글 상세보기</h2>
 <div class="card" style="width: 50%; height: 50%;">
     <div class="card-body">
-        <% if (post.filename && post.filename.length > 0) { %>
-            <img src="uploads/<%= post.filename%>" class="card-img-top" alt="...">
+        <!-- 본문 -->
+        <% if (post.filename && post.filename.length> 0) { %>
+            <img src="/uploads/<%= post.filename%>" class="card-img-top" alt="...">
         <% } %>
         <h5 class="card-title">
             <%= post.title%>
         </h5>
+        <% if (post.user_id === null) { %>
+            <p class="card-text">익명</p>    
+        <% } else { %>
+            <p class="card-text"><a href="/<%= post.user_id%>"><%= post.name%></a></p> 
+        <% } %>
         <p class="card-text">
             <%= post.content%>
         </p>
+        <div style="display: flex;">
+            <p class="card-text">
+                생성일 <%= post.created_at%> &nbsp; &nbsp;
+            </p>
+            <% if (post.updated_at) { %>
+                <p class="card-text">
+                    수정일 <%= post.updated_at%>
+                </p>
+            <% } %>
+        </div>
         <p class="card-text">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                 class="bi bi-heart-fill" viewBox="0 0 16 16">
@@ -17,16 +33,82 @@
                     d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
             </svg>
             <%= post.likes%>
-        </p>
-        <div style="display: flex;">
+        </p>        
+
+        <!-- 수정, 삭제 버튼들 -->
+        <div style="display: flex; justify-content: space-between;">
+            <!-- 회원의 글 -->
+            <% if (post.user_id) { %>
+                <!-- 현재 로그인 중인 회원과 글의 회원 데이터가 일치하면 수정, 삭제버튼을 보여준다.  -->
+                <% if (user && user.id === post.user_id) { %>
+                <a href="/post/<%= post.id%>/edit" role="button" class="btn btn-primary">수정하기</a>
+                <form action="/post/<%= post.id%>?_method=DELETE" method="post">
+                    <input type="hidden" name="userPost" value="1">
+                    <button type="submit" class="btn btn-danger text-nowrap">삭제</button>
+                </form>
+                <% } %>
+            <% } else { %>
+            <!-- 비회원의 글 -->
             <a href="/post/<%= post.id%>/edit" role="button" class="btn btn-primary">수정하기</a>
-            <form action="/post/<%= post.id%>?_method=DELETE" method="post">
-                <button type="submit" class="btn btn-secondary">삭제하기</button>
+            <form action="/post/<%= post.id%>?_method=DELETE" method="post" style="display: flex;">
+                <input type="password" class="form-control form-control-sm" placeholder="password" name="password">
+                <button type="submit" class="btn btn-danger text-nowrap">삭제</button>
             </form>
-        </div>
+            <% } %>              
+        </div>        
     </div>
 </div>
 
-<div id="comment" class="container">
+<br>
 
+<!-- 댓글 관련 -->
+<h4>댓글 목록</h4>
+<div id="comment" style="width: 75%;">
+    <div id="commentList">
+        <% comments.forEach(comment=> { %>
+            <div class="card">
+                <div class="card-header" style="display: flex; justify-content: space-between;">
+                    <!-- 회원의 댓글 -->
+                    <% if (comment.user_id) { %>
+                        <!-- 회원의 이름을 보여줘야하는데 일단 임시로 ㅇㅇ -->
+                        <p><a href="/user/<%= comment.user_id%>"><%= comment.name%>의 정보 바로가기</a></p>
+                        <!-- 현재 로그인 중인 회원과 댓글의 회원 데이터가 일치하면 삭제버튼을 보여준다.  -->
+                        <% if (user && user.id === comment.user_id) { %>
+                        <form action="/comment/<%= comment.id%>?_method=DELETE" method="post" style="display: flex;">
+                            <input type="hidden" name="post_id" value="<%= post.id%>">
+                            <button type="submit" class="btn btn-danger text-nowrap">삭제</button>
+                        </form>
+                        <% } %>
+                    <% } else { %>
+                    <!-- 비회원의 댓글 -->
+                        <p>익명</p>
+                        <form action="/comment/<%= comment.id%>?_method=DELETE" method="post" style="display: flex;">
+                            <input type="hidden" name="post_id" value="<%= post.id%>">
+                            <input type="password" class="form-control form-control-sm" placeholder="password" name="password">
+                            <button type="submit" class="btn btn-danger text-nowrap">삭제</button>
+                        </form>
+                    <% } %>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <%= comment.content%>
+                    </p>
+                </div>
+            </div>
+            <br>
+            <% }) %>
+    </div>
+
+
+
+    <form action="/comment" method="post" style="margin-bottom: 5em;">
+        <input type="hidden" name="id" value="<%= post.id%>">
+        <div class="mb-3">
+            <% if (user === null) { %>
+            <input class="form-control" id="password" type="password" name="password" placeholder="password">
+            <% } %>
+            <textarea class="form-control" id="comment" name="commentContent" rows="3" placeholder="content"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">comment</button>
+    </form>
 </div>
