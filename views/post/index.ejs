@@ -17,7 +17,7 @@
                     <% if (post.user_id === null) { %>
                         <p class="card-text">익명</p>    
                     <% } else { %>
-                        <p class="card-text"><a href="/<%= post.user_id%>"><%= post.name%></a></p> 
+                        <p class="card-text"><a href="/user/<%= post.user_id%>"><%= post.name%></a></p> 
                     <% } %>
                     <p class="card-text"><%= post.created_at%></p>
                     <p class="card-text"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">

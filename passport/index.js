@@ -1,6 +1,7 @@
 const passport = require('passport');
 const connection = require('../mysql/mysqlConfig'); 
 const local = require('./localStrategy');
+const google = require('./googleStrategy');
 
 module.exports = () => {
     passport.serializeUser((user, done) => { // 로그인 할 때
@@ -19,4 +20,5 @@ module.exports = () => {
     });
 
     local(); 
+    google();
 }; 

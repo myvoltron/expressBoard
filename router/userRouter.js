@@ -7,13 +7,11 @@ const router = express.Router();
 
 // 유저 목록 화면 
 router.get('/', (req, res) => {
-
-    console.log('asdf');
     
     connection.query('select * from user', (err, result) => {
         if (err) throw err; 
 
-        console.log(result);
+        // console.log(result);
 
         res.render('user/index', {
             users: result, 

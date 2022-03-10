@@ -11,7 +11,7 @@
         <% if (post.user_id === null) { %>
             <p class="card-text">익명</p>    
         <% } else { %>
-            <p class="card-text"><a href="/<%= post.user_id%>"><%= post.name%></a></p> 
+            <p class="card-text"><a href="/user/<%= post.user_id%>"><%= post.name%></a></p> 
         <% } %>
         <p class="card-text">
             <%= post.content%>
