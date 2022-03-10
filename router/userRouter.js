@@ -52,7 +52,7 @@ router.route('/:id')
         connection.query(`select * from user where id = ${user_id}`, (err, result) => {
 
             res.render('user/detail', {
-                user: result[0], 
+                userInfo: result[0], 
             }); 
         });
     })
@@ -92,12 +92,19 @@ router.get('/:id/edit', (req, res) => {
 
     const user_id = req.params.id; 
 
-    connection.query(`select * from user where id = ${user_id}`, (err, result) => {
+    // 현재 로그인 중인 회원과 수정할 회원의 아이디가 같아야 수정 화면을 제공할 수 있음. 
+    if (req.user && req.user.id === user_id) {
+        console.log('잘못된 접근!!'); 
+        res.redirect('/user/' + user_id); 
+    } else {
+        connection.query(`select * from user where id = ${user_id}`, (err, result) => {
 
-        res.render('user/edit', {
-            user: result[0], 
-        }); 
-    });
+            const userInfo = result[0]; 
+            res.render('user/edit', {
+                userInfo: userInfo,
+            }); 
+        });
+    }
 });
 
 module.exports = router; 

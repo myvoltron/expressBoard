@@ -35,8 +35,13 @@
             <%= post.likes%>
         </p>        
 
-        <!-- 수정, 삭제 버튼들 -->
+        <!-- 좋아요, 수정, 삭제 버튼들 -->
         <div style="display: flex; justify-content: space-between;">
+            <form action="/post/<%= post.id%>/like" method="get">
+                <button type="submit" class="btn">좋아요</button>
+            </form>
+
+
             <!-- 회원의 글 -->
             <% if (post.user_id) { %>
                 <!-- 현재 로그인 중인 회원과 글의 회원 데이터가 일치하면 수정, 삭제버튼을 보여준다.  -->

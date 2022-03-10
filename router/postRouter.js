@@ -188,4 +188,48 @@ router.get('/:id/edit', (req, res) => {
     });
 });
 
+// 좋아요(토글) 
+router.get('/:id/like', (req, res) => {
+
+    // 로그인 회원만 이용 가능
+    if (req.user === undefined || req.user === null) {
+        return; 
+    }
+
+    const post_id = req.params.id; 
+    const user_id = req.user.id; 
+
+    // 먼저 해당 글 그리고 해당 유저의 좋아요가 있는지 검색한다. 
+    connection.query(`select * from likes where post_id = ${post_id} and user_id = ${user_id}`, (err, result) => {
+        if (err) throw err;
+
+        const like = result[0];
+        if (like === null || like === undefined) {
+            // 없으면 post_id와 user_id 정보를 담고 있는 좋아요를 만든다. 
+            connection.query(`insert into likes(post_id, user_id) values(${post_id}, ${user_id})`, (err, result) => {
+                if (err) throw err;
+
+                // 그리고 해당 글의 좋아요 수를 1 올린다. 
+                connection.query(`update post set likes = likes + 1 where id = ${post_id}`, (err, result) => {
+                    if (err) throw err;
+
+                    res.redirect('/post/' + post_id);
+                });
+            });
+        } else { 
+            // 있으면 해당 글의 좋아요를 삭제하고 
+            connection.query(`delete from likes where post_id = ${post_id} and user_id = ${user_id}`, (err, result) => {
+                if (err) throw err; 
+
+                // 해당 글의 좋아요 수를 1 내린다. 
+                connection.query(`update post set likes = likes - 1 where id = ${post_id}`, (err, result) => {
+                    if (err) throw err;
+
+                    res.redirect('/post/' + post_id);
+                });
+            })
+        }
+    });     
+}); 
+
 module.exports = router; 
