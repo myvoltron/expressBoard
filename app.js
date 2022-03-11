@@ -8,8 +8,17 @@ const ejsLayout = require('express-ejs-layouts');
 const path = require('path'); 
 const morgan = require('morgan');
 const methodOverride = require('method-override');
+const helmet = require('helmet');
+const hpp = require('hpp');
+const redis = require('redis');
+const RedisStore = require('connect-redis')(session);
+const logger = require('./logger');
  
 dotenv.config();
+const redisClient = redis.createClient({
+    url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+    password: process.env.REDIS_PASSWORD, 
+});
 const passportConfig = require('./passport'); 
 
 const app = express(); 
@@ -20,21 +29,32 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views')); 
 app.use(ejsLayout); 
 
-app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'production') {
+    app.use(morgan('combined'));
+    app.use(helmet({ contentSecurityPolicy: false }));
+    app.use(hpp());
+} else {
+    app.use(morgan('dev'));
+}
 app.use(methodOverride('_method')); // '_method'를 안넣으면 오류가 남
 app.use(express.static(path.join(__dirname, 'public'))); 
 app.use(express.json()); // json 데이터 처리
 app.use(express.urlencoded({ extended: false })); // POST로 들어오는 body 처리 
 app.use(cookieParser(process.env.COOKIE_SECRET));
-app.use(session({               // passport.session() 보다 앞에 있어야함
+const sessionOption = session({               // passport.session() 보다 앞에 있어야함
     resave: false,
     saveUninitialized: false,
     secret: process.env.COOKIE_SECRET, 
     cookie: {
         httpOnly: true, 
         secure: false, 
-    }, 
-}));
+    },
+    store: new RedisStore({ client: redisClient }),
+});
+if (process.env.NODE_ENV === 'production') {
+    sessionOption.proxy = true; 
+}
+app.use(session(sessionOption)); 
 app.use(passport.initialize()); // req에 passport 설정을 심는다. 
 app.use(passport.session());    // req.session 에 passport 정보를 심는다. 
 /* 
@@ -74,6 +94,8 @@ app.use('/comment', commentRouter);
 app.use((req, res, next) => {
     const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
     error.status = 404;
+    logger.info('hello');
+    logger.error(error.message); 
     next(error);
 });
 
