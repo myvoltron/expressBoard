@@ -81,6 +81,7 @@ const postRouter = require('./router/postRouter');
 const userRouter = require('./router/userRouter');
 const authRouter = require('./router/authRouter');
 const commentRouter = require('./router/commentRouter');
+const searchRouter = require('./router/searchRouter'); 
 
 app.get('/', (req, res) => {
     res.redirect('/post');
@@ -94,7 +95,8 @@ app.use((req, res, next) => {
 app.use('/post', postRouter); 
 app.use('/user', userRouter); 
 app.use('/auth', authRouter);
-app.use('/comment', commentRouter); 
+app.use('/comment', commentRouter);
+app.use('/search', searchRouter);  
 
 
 
