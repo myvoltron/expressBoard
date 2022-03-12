@@ -1,5 +1,5 @@
 # expressBoard
-SNS 바로가기 - http://13.125.200.119/post
+SNS 바로가기 - http://13.124.131.232/post
 
 ### 요구사항
 
