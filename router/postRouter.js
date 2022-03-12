@@ -25,12 +25,19 @@ const upload = multer({
         },
     }),
     limits: { fileSize: 10 * 1024 * 1024 },
+    fileFilter: (req, file, done) => {
+        const ext = path.extname(file.originalname);
+        if (ext !== ".jpeg" || ".png" || ".jpg") {
+            return done(null, false); 
+        }
+        done(null, true); 
+    }, 
 });
 
 // 글 목록 화면 
 router.get('/', (req, res) => {
 
-    connection.query('SELECT P.*, U.name FROM post P LEFT OUTER JOIN user U ON P.user_id = U.id', (err, result) => {
+    connection.query('SELECT P.*, U.name FROM post P LEFT OUTER JOIN user U ON P.user_id = U.id ORDER BY P.created_at DESC', (err, result) => {
         if (err) throw err;
 
         // console.log(result);
