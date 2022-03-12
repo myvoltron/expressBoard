@@ -1,7 +1,7 @@
 <div class="container">
     <h2>글 쓰기</h2>
     <form action="/post" method="post" enctype="multipart/form-data">
-        <% if (user === null) { %>
+        <% if (user === undefined) { %>
         <div class="mb-3">
             <label for="password" class="form-label">Password</label>
             <input type="password" class="form-control" id="password" name="password">

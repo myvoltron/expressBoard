@@ -9,7 +9,10 @@ module.exports = () => {
         passwordField: 'password', 
     }, (email, password, done) => {
         connection.query('select * from user where email = ?', [email], async (err, result) => {
-            if (err) done(null, false, { message: 'email을 확인 하시오.' }); 
+            if (err) {
+                console.error(err);
+                next(err); 
+            }
 
             const exUser = result[0]; 
 
@@ -20,6 +23,8 @@ module.exports = () => {
                 } else {
                     done(null, false, { message: '비밀번호가 일치하지 않습니다.' }); 
                 }
+            } else {
+                done(null, false, { message: '가입되지 않은 회원입니다.' }); 
             }
         });
     }))

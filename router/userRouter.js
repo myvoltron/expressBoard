@@ -31,7 +31,8 @@ router.post('/', (req, res) => {
             connection.query('insert into user(email, password, name) values(?, ?, ?)', [email, hash, name], (err, result) => {
                 if (err) throw err;
 
-                res.redirect('/user');
+                return res.send(`<script>alert('회원가입 성공'); location.href='/user';</script>`); // 회원가입 성공
+                // res.redirect('/user');
             });
         })
         .catch(err => {
@@ -135,17 +136,14 @@ router.get('/:id/follow', (req, res) => {
 
     // 로그인 되어 있지않으면 로그인화면으로 보낸다. 
     if (!following_id) {
-
-        console.log('잘못된 접근!');
-        res.redirect('/auth/login');
+        return res.send(`<script>alert('좋아요 기능을 사용하시려면 로그인을 해주세요'); location.href='/auth/login';</script>`); // 로그인화면으로 리다이렉트
+        // res.redirect('/auth/login');
     } else {
 
         // 팔로우하려는 유저와 팔로우하는 유저가 비교
-        if (follower_id === following_id) {
-
-            console.log('잘못된 접근!');
-            res.redirect('/post');
-        } else {
+        if (follower_id === following_id) { // 같으면
+            return res.send(`<script>alert('자기자신을 팔로우할 순 없습니다.'); location.href='/user/${req.params.id}';</script>`); // 회원 정보창으로 리다이렉트
+        } else {                            // 다르다면
 
             // 이미 팔로우되어있는지 확인
             connection.query(`SELECT * FROM follow WHERE following_id = ${following_id} AND follower_id = ${follower_id}`, (err, result) => {
@@ -156,13 +154,15 @@ router.get('/:id/follow', (req, res) => {
                     connection.query(`DELETE FROM follow WHERE following_id = ${following_id} AND follower_id = ${follower_id}`, (err, result) => {
                         if (err) throw err;
 
-                        res.redirect('/user/' + req.params.id);
+                        return res.send(`<script>alert('팔로우를 해제합니다.'); location.href='/user/${req.params.id}';</script>`); // 팔로우 해제
+                        // res.redirect('/user/' + req.params.id);
                     });
                 } else { // 팔로우 생성
                     connection.query(`INSERT INTO follow(following_id, follower_id) values(${following_id}, ${follower_id})`, (err, result) => {
                         if (err) throw err;
 
-                        res.redirect('/user/' + req.params.id);
+                        return res.send(`<script>alert('팔로우 했습니다.'); location.href='/user/${req.params.id}';</script>`); // 팔로우 하기
+                        // res.redirect('/user/' + req.params.id);
                     });
                 }
             });

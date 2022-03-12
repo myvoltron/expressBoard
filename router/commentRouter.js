@@ -18,9 +18,6 @@ router.route('/')
     }); 
 
 router.route('/:id')
-    .put((req, res) => { // 댓글 수정
-
-    })
     .delete((req, res) => { // 댓글 삭제
 
         const post_id = req.body.post_id; 
@@ -35,19 +32,22 @@ router.route('/:id')
                     connection.query(`delete from comment where id = ${comment_id}`, (err, result) => {
                         if (err) throw err; 
             
-                        res.redirect('/post/' + post_id); 
+                        return res.send(`<script>alert('댓글 삭제 성공'); location.href='/post/${post_id}';</script>`); // 댓글 삭제 성공
+                        // res.redirect('/post/' + post_id); 
                     }); 
                 } else { // 비밀번호 틀림 
 
-                    console.log('댓글 삭제 실패!');
-                    res.redirect('/post/' + post_id); 
+                    // console.log('댓글 삭제 실패!');
+                    return res.send(`<script>alert('댓글 삭제 실패 비밀번호를 확인해주세요'); location.href='/post/${post_id}';</script>`); // 댓글 삭제 실패
+                    // res.redirect('/post/' + post_id); 
                 }
             })
-        } else {
+        } else {        // 회원의 댓글 삭제
             connection.query(`delete from comment where id = ${comment_id}`, (err, result) => {
                 if (err) throw err; 
     
-                res.redirect('/post/' + post_id); 
+                return res.send(`<script>alert('댓글 삭제 성공'); location.href='/post/${post_id}';</script>`); // 댓글 삭제 성공
+                // res.redirect('/post/' + post_id); 
             }); 
         }        
     }); 
