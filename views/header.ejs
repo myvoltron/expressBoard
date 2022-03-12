@@ -20,7 +20,7 @@
 
       <!-- 인증관련 -->
       <div class="col-md-3 text-end">
-        <% if (user) { %>
+        <% if (typeof(user) !== 'undefined' ) { %>
           <a href="/auth/logout" role="button" class="btn btn-outline-primary me-2">Logout</a>
           <a href="/user/<%= user.id%>" role="button" class="btn btn-primary">내 정보</a>
         <% } else { %>
