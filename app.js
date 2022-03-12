@@ -41,7 +41,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json()); // json 데이터 처리
 app.use(express.urlencoded({ extended: false })); // POST로 들어오는 body 처리 
 app.use(cookieParser(process.env.COOKIE_SECRET));
-const sessionOption = session({               // passport.session() 보다 앞에 있어야함
+// const sessionOption = session({               // passport.session() 보다 앞에 있어야함
+//     resave: false,
+//     saveUninitialized: false,
+//     secret: process.env.COOKIE_SECRET, 
+//     cookie: {
+//         httpOnly: true, 
+//         secure: false, 
+//     },
+//     store: new RedisStore({ client: redisClient }),
+// });
+const sessionOption = {
     resave: false,
     saveUninitialized: false,
     secret: process.env.COOKIE_SECRET, 
@@ -50,7 +60,7 @@ const sessionOption = session({               // passport.session() 보다 앞�
         secure: false, 
     },
     store: new RedisStore({ client: redisClient }),
-});
+}
 if (process.env.NODE_ENV === 'production') {
     sessionOption.proxy = true; 
 }
