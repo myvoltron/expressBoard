@@ -77,7 +77,7 @@ app.get('/', (req, res) => {
 });
 app.use((req, res, next) => {
 
-    res.locals.user = req.user != null ? req.user : null; // user를 전역적으로 처리하게 함 
+    res.locals.user = req.user !== null && req.user !== undefined ? req.user : null; // user를 전역적으로 처리하게 함 
     next();
 }); 
 app.use('/post', postRouter); 
